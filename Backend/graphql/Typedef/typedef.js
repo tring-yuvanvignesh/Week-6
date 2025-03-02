@@ -1,16 +1,15 @@
-const gql = require("graphql-tag"); 
+const gql = require("graphql-tag");
 
 const typedef = gql`
     type User {
         id: Int!
         name: String!
         email: String!
-        password: String!
         persona: [Persona]
     }
 
     type Persona {
-        id: Int!  # Added id field
+        id: Int!
         user_id: Int!
         persona_name: String!
         quote: String!
@@ -19,7 +18,13 @@ const typedef = gql`
         pain: String!
         jobs: String!
         activities: String!
-    }   
+        image: String!
+    }
+
+    type AuthPayload {
+        token: String!
+        user: User!
+    }
 
     type Query {
         users: [User]
@@ -28,8 +33,32 @@ const typedef = gql`
 
     type Mutation {
         createUser(name: String!, email: String!, password: String!): User
-        createPersona(user_id: Int!, persona_name: String!, quote: String!, description: String!, attitudes: String!, pain: String!, jobs: String!, activities: String!): Persona
-        updatePersonaForCurrentUser(id: Int!, persona_name: String!, quote: String!, description: String!, attitudes: String!, pain: String!, jobs: String!, activities: String!): Persona
+        loginUser(email: String!, password: String!): AuthPayload
+
+        createPersona(
+            user_id: Int!, 
+            persona_name: String!, 
+            quote: String!, 
+            description: String!, 
+            attitudes: String!, 
+            pain: String!, 
+            jobs: String!, 
+            activities: String!, 
+            image: String!
+        ): Persona
+
+        updatePersonaForCurrentUser(
+            id: Int!, 
+            persona_name: String!, 
+            quote: String!, 
+            description: String!, 
+            attitudes: String!, 
+            pain: String!, 
+            jobs: String!, 
+            activities: String!, 
+            image: String!
+        ): Persona
+
         deletePersonaForCurrentUser(id: Int!): Persona
     }
 `;
