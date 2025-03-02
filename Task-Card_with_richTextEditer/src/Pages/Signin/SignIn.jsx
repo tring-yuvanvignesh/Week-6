@@ -53,57 +53,57 @@
 // export default SignIn;
 
 
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux"
-import { loginUser } from "../../Slicer/authSlice"
-import { Link, useNavigate } from "react-router-dom"
-import googleLogo from '../../Images/google_logo.png'
-import "./signIn.css"
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../Slicer/authSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { useLazyQuery } from "@apollo/client";
+import { GET_USER } from "../../api/userApi";
+import googleLogo from "../../Images/google_logo.png";
+import "./signIn.css";
 
 const SignIn = () => {
     const [credentials, setCredentials] = useState({ email: "", password: "" });
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const users = useSelector((state) => state.auth.users);
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const res = await fetch("http://localhost:3000/user/Raja123@gmail.com");
-
-    //             if (!res.ok) { 
-    //                 throw new Error(`HTTP error! Status: ${res.status}`);
-    //             }
-
-    //             const data = await res.json();
-    //             console.log(data);
-    //         } catch (error) {
-    //             console.error("Error fetching data:", error.message);
-    //         }
-    //     }
-    // },[])
+    const [getUser, { error }] = useLazyQuery(GET_USER);
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        const userExists = users.find(
-            (user) => user.email === credentials.email && user.password === credentials.password
-        )
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-        if (userExists) {
-            dispatch(loginUser(credentials))
-            navigate("/landingPage")
-        } else {
-            alert("Invalid email or password")
+        if (!credentials.email || !credentials.password) {
+            alert("Please enter both email and password.");
+            return;
+        }
+
+        try {
+            const { data } = await getUser({ variables: { email: credentials.email } });
+
+            if (data?.user) {
+                const user = data.user;
+
+                if (credentials.password === user.password) { 
+                    dispatch(setUser(user));
+                    navigate("/landingPage");
+                } else {
+                    alert("Invalid password.");
+                }
+            } else {
+                alert("User not found.");
+            }
+        } catch (err) {
+            console.error("GraphQL Error:", err);
+            alert("An error occurred. Please try again.");
         }
     };
 
     return (
         <div className="signin-wrapper">
-
             <div className="content-wrapper">
                 <div className="left-section">
                     <h2>Welcome Back!</h2>
@@ -113,16 +113,13 @@ const SignIn = () => {
                     <h2>Sign In</h2>
 
                     <label htmlFor="email">Email</label>
-                    <input type="email" name="email" placeholder="Enter your email" onChange={handleChange}/>
+                    <input type="email" name="email" placeholder="Enter your email" onChange={handleChange} />
 
                     <label htmlFor="password">Password</label>
-                    <input type="password" name="password" placeholder="Enter your password" onChange={handleChange}/>
+                    <input type="password" name="password" placeholder="Enter your password" onChange={handleChange} />
                     <br />
 
-                    {/* <div className="checkbox-container">
-                        <label><input type="checkbox" /> Remember me</label>
-                        <a href="#" className="forgot-password">Forgot Password?</a>
-                    </div> */}
+                    {error && <p style={{ color: "red" }}>GraphQL Error: {error.message}</p>}
 
                     <button className="submit-btn" onClick={handleSubmit}>Login</button>
 
@@ -135,7 +132,7 @@ const SignIn = () => {
                     </button>
 
                     <p className="signIn-signup-container">
-                        Don’t have an account? <Link to={'/signUp'}><a href="./signUp.html">Sign Up</a></Link>
+                        Don’t have an account? <Link to="/signUp">Sign Up</Link>
                     </p>
                 </div>
             </div>

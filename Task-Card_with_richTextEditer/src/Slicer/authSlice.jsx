@@ -139,19 +139,9 @@
             users: getUsersFromLocalStorage(),
             // currentUserData: getCurrentUserFromLocalStorage(),
             currentUser: getCurrentUserFromLocalStorage(),
-            user_apollo: null,
-            users_apollo: []
+            c_User: null,
         },
         reducers: {
-            registerUser: (state, action) => {
-
-                // using users state, users local
-
-                const users = getUsersFromLocalStorage()
-                users.push({ ...action.payload, personas: [] }) // update users state
-                localStorage.setItem("users", JSON.stringify(users)) // update users local
-                state.users = users
-            },
 
             loginUser: (state, action) => {
 
@@ -238,13 +228,11 @@
                 state.users = updatedUsers
             },
             setUser: (state, action) => {
-                state.user_apollo = action.payload;
-            },
-            setUsers: (state, action) => {
-                state.users_apollo = action.payload;
+                state.c_User = action.payload;
+                state.currentUser =action.payload
             },
         }
     })
 
-    export const { registerUser, loginUser, logoutUser, updatePersonaForCurrentUser, deletePersonaForCurrentUser, setUser, setUsers } = authSlice.actions
+    export const { loginUser, logoutUser, updatePersonaForCurrentUser, deletePersonaForCurrentUser, setUser, setUsers } = authSlice.actions
     export default authSlice.reducer

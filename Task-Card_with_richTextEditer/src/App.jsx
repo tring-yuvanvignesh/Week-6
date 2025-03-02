@@ -19,19 +19,19 @@ const client = new ApolloClient({
 const App = () => {
   return (
     <ApolloProvider client={client}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<Homepage />} />
-          <Route path='signUp' element={<Signup />} />
-          <Route path='signIn' element={<SignIn />} />
-          <Route path='/persona/:id' element={<PersonaDetails />} />
-          <Route element={<Privateroute />}>
-            <Route path='landingPage' element={<LandingPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </Provider>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Homepage />} />
+            <Route path='signUp' element={<Signup />} />
+            <Route path='signIn' element={<SignIn />} />
+            <Route path='/persona/:id' element={<PersonaDetails />} />
+            <Route element={<Privateroute />}>
+              <Route path='landingPage' element={<LandingPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </Provider>
     </ApolloProvider>
   );
 };
