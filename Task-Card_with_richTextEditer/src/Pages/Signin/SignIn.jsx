@@ -85,10 +85,10 @@ const SignIn = () => {
             const { data } = await getUser({ variables: { email: credentials.email } });
 
             if (data?.user) {
-                const user = data.user;
+                const userData = data.user;
 
-                if (credentials.password === user.password) { 
-                    dispatch(setUser(user));
+                if (credentials.password === userData.password) { 
+                    dispatch(setUser(userData));
                     navigate("/landingPage");
                 } else {
                     alert("Invalid password.");
