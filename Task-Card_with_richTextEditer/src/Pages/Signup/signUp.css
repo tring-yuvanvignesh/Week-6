@@ -1,0 +1,143 @@
+.signup-wrapper {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.content-container {
+    position: relative;
+    width: 80%;
+    height: 89%;
+    max-width: 900px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.signUp-right-section {
+    width: 40%;
+    background-color: rgba(3, 15, 21, 0.982);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+}
+
+.signup-container {
+    overflow-y: hidden;
+    width: 60%;
+    background: #222;
+    padding: 12px 55px;
+    border-radius: 20px 0 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signup-container h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.signup-container label {
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.signup-container input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    outline: none;
+    margin-bottom: 15px;
+}
+
+.signup-container input::placeholder {
+    color: #ddd;
+}
+
+.register-btn {
+    width: 100%;
+    background: #ffdd57;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.register-btn:hover {
+    background: #ffcc33;
+}
+
+.signUp-divider {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: white;
+}
+
+.signUp-divider hr {
+    flex-grow: 1;
+    border: none;
+    height: 1px;
+    background: white;
+}
+
+.signUp-divider span {
+    margin: 0 10px;
+}
+
+.google-signup-btn {
+    width: 100%;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.google-signup-btn img {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.google-signup-btn:hover {
+    background: #f0f0f0;
+}
+
+.signin-redirect {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: white;
+}
+
+.signin-redirect a {
+    color: #ffdd57;
+    text-decoration: none;
+}
+

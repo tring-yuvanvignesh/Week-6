@@ -1,0 +1,15 @@
+.Nav-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: black;
+}
+.nav-li{
+    display: flex;
+    gap: 3rem;
+}
+
+.nav-li-items {
+    color: white;
+}
