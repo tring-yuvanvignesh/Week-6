@@ -1,84 +1,110 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useMutation, gql } from "@apollo/client";
 import { registerUser } from "../../Slicer/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import googleLogo from '../../Images/google_logo.png';
 import validator from 'validator';
-import "./signUp.css"
+import "./signUp.css";
+
+// GraphQL Mutation
+const CREATE_USER = gql`
+    mutation CreateUser($name: String!, $email: String!, $password: String!) {
+        createUser(name: $name, email: $email, password: $password) {
+            id
+            name
+            email
+        }
+    }
+`;
 
 const SignUp = () => {
-    const [userDetails, setUserDetails] = useState({ name: "", email: "", password: "" })
-    const [errorMessage, setErrorMessage] = useState(null)
-    const [emailError, setEmailError] = useState(null)
-    const [nameError, setNameError] = useState(null)
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const [userDetails, setUserDetails] = useState({ name: "", email: "", password: "" });
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [emailError, setEmailError] = useState(null);
+    const [nameError, setNameError] = useState(null);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const users = useSelector((state) => state.auth.users);
 
+    const [createUser, { loading, error }] = useMutation(CREATE_USER);
 
     const handleChange = (e) => {
-        setUserDetails({ ...userDetails, [e.target.name]: e.target.value })
-    }
+        setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+    };
 
     const validate = (e) => {
-        const password = e.target.value
+        const password = e.target.value;
         if (validator.isStrongPassword(password, {
             minLength: 8, minLowercase: 1,
             minUppercase: 1, minNumbers: 1, minSymbols: 1
         })) {
-            setErrorMessage(null)
-            setUserDetails({ ...userDetails, password })
+            setErrorMessage(null);
+            setUserDetails({ ...userDetails, password });
         } else {
-            setErrorMessage("Your Password is Week");
-            setUserDetails({ ...userDetails, password: "" })
+            setErrorMessage("Your Password is Weak");
+            setUserDetails({ ...userDetails, password: "" });
         }
-    }
+    };
 
     const validateEmail = (e) => {
-
         const email = e.target.value;
         const emailExists = users.some(user => user.email === email);
 
         if (!validator.isEmail(email)) {
-            setEmailError("Enter a valid Email!")
-            setUserDetails({ ...userDetails, email: "" })
+            setEmailError("Enter a valid Email!");
+            setUserDetails({ ...userDetails, email: "" });
             return;
         }
     
         if (emailExists) {
-            setEmailError("Email is already in use!")
-            setUserDetails({ ...userDetails, email: "" })
+            setEmailError("Email is already in use!");
+            setUserDetails({ ...userDetails, email: "" });
             return;
         }
     
         setEmailError(null);
-        setUserDetails({ ...userDetails, email })
-    }
+        setUserDetails({ ...userDetails, email });
+    };
 
     const validateName = (e) => {
         const currName = e.target.value;
 
-        if(currName.trim() === ""){
-            setNameError("Please enter a valid name.")
-            setUserDetails({ ...userDetails, name: "" })
-            return
+        if (currName.trim() === "") {
+            setNameError("Please enter a valid name.");
+            setUserDetails({ ...userDetails, name: "" });
+            return;
+        } else {
+            setNameError(null);
+            setUserDetails({ ...userDetails, name: currName });
         }
-        else{
-            setNameError(null)
-            setUserDetails({ ...userDetails, name: currName })
-        }
-    }
+    };
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (userDetails.name === "" || userDetails.email === "" || userDetails.password === "") {
-            alert('Please enter the all details')
-            return
+            alert('Please enter all details');
+            return;
         }
 
-        dispatch(registerUser(userDetails))
-        navigate("/signIn")
-    }
+        try {
+            const { data } = await createUser({
+                variables: {
+                    name: userDetails.name,
+                    email: userDetails.email,
+                    password: userDetails.password
+                }
+            });
+
+            if (data.createUser) {
+                dispatch(registerUser(data.createUser)); 
+                dispatch(serUsers(data.createUser))
+                navigate("/signIn"); 
+            }
+        } catch (err) {
+            console.error("GraphQL Error:", err);
+        }
+    };
 
     return (
         <div className="signup-wrapper">
@@ -87,26 +113,22 @@ const SignUp = () => {
                     <h2>Sign Up</h2>
 
                     <label htmlFor="name">Full Name</label>
-                    <input type="text" name="name" placeholder="Enter your full name" onChange={validateName} required/>
-                    {nameError && (
-                        <span style={{ color: 'red' }}>{nameError}</span>
-                    )}
+                    <input type="text" name="name" placeholder="Enter your full name" onChange={validateName} required />
+                    {nameError && <span style={{ color: 'red' }}>{nameError}</span>}
 
                     <label htmlFor="email">Email</label>
                     <input type="email" name="email" placeholder="Enter your email" onChange={validateEmail} />
-                    {emailError && (
-                        <span style={{ color: 'red' }}>{emailError}</span>
-                    )}
+                    {emailError && <span style={{ color: 'red' }}>{emailError}</span>}
 
                     <label htmlFor="password">Password</label>
                     <input type="password" name="password" placeholder="Create a password" onChange={validate} />
-                    {errorMessage && (
-                        <span style={{ color: 'red', marginBottom: '4px' }}>{errorMessage}</span>
-                    )}
+                    {errorMessage && <span style={{ color: 'red', marginBottom: '4px' }}>{errorMessage}</span>}
 
-                    <button className="register-btn" onClick={handleSubmit} disabled={!!(errorMessage || emailError || nameError)}>
-                        Register
+                    <button className="register-btn" onClick={handleSubmit} disabled={loading || !!(errorMessage || emailError || nameError)}>
+                        {loading ? "Registering..." : "Register"}
                     </button>
+
+                    {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
 
                     <div className="signUp-divider">
                         <hr /> <span>OR</span> <hr />
@@ -126,7 +148,7 @@ const SignUp = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default SignUp;

@@ -8,9 +8,17 @@ import PersonaDetails from './Pages/CardPage/PersonaDetails';
 import Privateroute from './Components/Privateroute/Privateroute';
 import { Provider } from 'react-redux';
 import store from './app/store';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql', // Make sure this is correct!
+  cache: new InMemoryCache(),
+});
 
 const App = () => {
   return (
+    <ApolloProvider client={client}>
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
@@ -24,6 +32,7 @@ const App = () => {
         </Routes>
       </BrowserRouter>
     </Provider>
+    </ApolloProvider>
   );
 };
 
