@@ -1,6 +1,6 @@
-    import { gql } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-    export const CREATE_USER = gql`
+export const CREATE_USER = gql`
         mutation CreateUser($name: String!, $email: String!, $password: String!) {
             createUser(name: $name, email: $email, password: $password) {
                 id
@@ -10,7 +10,7 @@
         }
     `;
 
-    export const GET_USER = gql`
+export const GET_USER = gql`
         query GetUser($email: String!) {
             user(email: $email) {
                 id
@@ -26,12 +26,13 @@
                     pain
                     jobs
                     activities
+                    image
                 }
             }
         }
     `;
 
-    export const GET_USERS = gql`
+export const GET_USERS = gql`
         query GetUsers {
             users {
                 id
@@ -39,4 +40,106 @@
                 email
             }
         }
-    `;  
+    `;
+
+export const CREATE_PERSONA = gql`
+        mutation CreatePersona(
+        $persona_name: String!
+        $quote: String!
+        $description: String!
+        $attitudes: String!
+        $pain: String!
+        $jobs: String!
+        $activities: String!
+        $image: String!
+        ) {
+        createPersona(
+            persona_name: $persona_name
+            quote: $quote
+            description: $description
+            attitudes: $attitudes
+            pain: $pain
+            jobs: $jobs
+            activities: $activities
+            image: $image
+        ) {
+            id
+            persona_name
+            quote
+            description
+            attitudes
+            pain
+            jobs
+            activities
+            image
+        }
+  }
+`;
+
+export const UPDATE_PERSONA = gql`
+        mutation UpdatePersona(
+            $id: ID!
+            $persona_name: String!
+            $quote: String!
+            $description: String!
+            $attitudes: String!
+            $pain: String!
+            $jobs: String!
+            $activities: String!
+            $image: String!
+        ) {
+            updatePersonaForCurrentUser(
+            id: $id
+            persona_name: $persona_name
+            quote: $quote
+            description: $description
+            attitudes: $attitudes
+            pain: $pain
+            jobs: $jobs
+            activities: $activities
+            image: $image
+            ) {
+            id
+            persona_name
+            quote
+            description
+            attitudes
+            pain
+            jobs
+            activities
+            image
+            }
+  }
+`;
+
+export const DELETE_PERSONA = gql`
+        mutation DeletePersona($id: ID!) {
+            deletePersonaForCurrentUser(id: $id) {
+            id
+            }
+        }
+`;
+
+
+export const LOGIN_USER = gql`
+        mutation loginUser($email: String!, $password: String!) {
+        loginUser(email: $email, password: $password) {
+            token
+            user {
+            id
+            name
+            email
+            persona {
+                id
+                persona_name
+                quote
+                description
+                attitudes
+                pain
+                jobs
+                activities
+                image
+            }
+        }}
+    }
+`;

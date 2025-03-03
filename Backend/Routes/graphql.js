@@ -7,7 +7,6 @@ async function startServer(app) {
     const server = new ApolloServer({ typeDefs, resolvers})
     await server.start()
     app.use('/graphql', expressMiddleware(server))
-    
 }
 
 module.exports = startServer

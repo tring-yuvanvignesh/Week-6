@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 import validator from "validator";
-import { CREATE_USER, GET_USERS } from "../../api/userApi";
+import { CREATE_USER } from "../../api/userApi";
 import googleLogo from "../../Images/google_logo.png";
 import "./signUp.css";
 
@@ -13,13 +13,8 @@ const SignUp = () => {
     const [nameError, setNameError] = useState(null);
 
     const navigate = useNavigate();
-
-
-    const { data: usersData, refetch } = useQuery(GET_USERS);
     
-    const [createUser, { error }] = useMutation(CREATE_USER, {
-        refetchQueries: [{ query: GET_USERS }],
-    });
+    const [createUser, { error }] = useMutation(CREATE_USER);
 
     const handleChange = (e) => {
         setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
@@ -48,15 +43,8 @@ const SignUp = () => {
             return;
         }
 
-        refetch().then(() => {
-            if (usersData?.users.some(user => user.email === email)) {
-                setEmailError("Email is already in use!");
-                setUserDetails({ ...userDetails, email: "" });
-                return;
-            }
-            setEmailError(null);
-            setUserDetails({ ...userDetails, email });
-        });
+        setEmailError(null);
+        setUserDetails({ ...userDetails, email });
     };
 
     const validateName = (e) => {
@@ -91,7 +79,7 @@ const SignUp = () => {
                 navigate("/signIn");
             }
         } catch (err) {
-            console.error("GraphQL Error:", err);
+            setEmailError(err.message);
         }
     };
 
@@ -111,13 +99,11 @@ const SignUp = () => {
 
                     <label htmlFor="password">Password</label>
                     <input type="password" name="password" placeholder="Create a password" onChange={validatePassword} />
-                    {errorMessage && <span style={{ color: "red", marginBottom: "4px" }}>{errorMessage}</span>}
+                    {errorMessage && <span style={{ color: "red" }}>{errorMessage}</span>}
 
                     <button className="register-btn" onClick={handleSubmit} disabled={errorMessage || emailError || nameError}>
                         Register
                     </button>
-
-                    {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
 
                     <div className="signUp-divider">
                         <hr /> <span>OR</span> <hr />
