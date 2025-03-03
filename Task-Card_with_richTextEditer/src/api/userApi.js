@@ -32,53 +32,46 @@ export const GET_USER = gql`
         }
     `;
 
-export const GET_USERS = gql`
-        query GetUsers {
-            users {
-                id
-                name
-                email
-            }
-        }
-    `;
-
 export const CREATE_PERSONA = gql`
-        mutation CreatePersona(
-        $persona_name: String!
-        $quote: String!
-        $description: String!
-        $attitudes: String!
-        $pain: String!
-        $jobs: String!
-        $activities: String!
-        $image: String!
-        ) {
-        createPersona(
-            persona_name: $persona_name
-            quote: $quote
-            description: $description
-            attitudes: $attitudes
-            pain: $pain
-            jobs: $jobs
-            activities: $activities
-            image: $image
-        ) {
-            id
-            persona_name
-            quote
-            description
-            attitudes
-            pain
-            jobs
-            activities
-            image
-        }
+  mutation CreatePersona(
+    $persona_name: String!,
+    $quote: String!,
+    $description: String!,
+    $attitudes: String!,
+    $pain: String!,
+    $jobs: String!,
+    $activities: String!,
+    $image: String!,
+    $user_id: Int! 
+  ) {
+    createPersona(
+        persona_name: $persona_name,
+        quote: $quote,
+        description: $description,
+        attitudes: $attitudes,
+        pain: $pain,
+        jobs: $jobs,
+        activities: $activities,
+        image: $image,
+        user_id: $user_id 
+    ) {
+      id
+      persona_name
+      quote
+      description
+      attitudes
+      pain
+      jobs
+      activities
+      image
+      user_id
+    }
   }
 `;
 
 export const UPDATE_PERSONA = gql`
         mutation UpdatePersona(
-            $id: ID!
+            $id: Int!
             $persona_name: String!
             $quote: String!
             $description: String!

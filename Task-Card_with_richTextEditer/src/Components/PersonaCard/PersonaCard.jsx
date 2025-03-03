@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./personaCard.css";
 
+const defaultImage = "Task-Card_with_richTextEditer\src\Images\login_background.png"; 
+
 const PersonaCard = ({ id, image, title, lastUpdated }) => {
     const navigate = useNavigate();
     return (
         <div className="persona-card" onClick={() => navigate(`/persona/${id}`)}>
-            <img src={image} alt={title} className="persona-image" />
+            <img src={image || defaultImage} alt={title || "Persona"} className="persona-image" />
             <h3 className="persona-title">{title || "Untitled Persona"}</h3>
-            {/* <p className="persona-timestamp">Last updated: {lastUpdated || "Never"}</p> */}
+            {lastUpdated && <p className="persona-timestamp">Last updated: {lastUpdated}</p>}
         </div>
     );
 };
@@ -26,10 +28,11 @@ const AddPersonaCard = ({ onClick }) => {
 const PersonaGrid = () => {
     const navigate = useNavigate();
     const currentUser = useSelector((state) => state.auth.currentUser);
-    const personas = currentUser.persona || [];
+    const personas = currentUser?.persona || [];
 
     const handleAddPersona = () => {
-        const newId = personas.length > 0 ? personas[personas.length - 1].id + 1 : 1;
+        const maxId = personas.reduce((max, p) => (p.id > max ? p.id : max), 0);
+        const newId = maxId + 1;
         navigate(`/persona/${newId}`, { state: { isNew: true } });
     };
 
@@ -39,16 +42,17 @@ const PersonaGrid = () => {
                 <div className="AddPersona">
                     <button onClick={handleAddPersona}><span>+</span> Add Persona</button>
                 </div>
-                <div className="persona-grid">
-                    {personas.map((persona) => (
-                        <PersonaCard
-                            key={persona.id}
-                            id={persona.id}
-                            image={persona.image}
-                            title={persona.persona_name}
-                            lastUpdated={persona.lastUpdated}
-                        />
-                    ))}
+                <div className="persona-grid">{
+                        personas.map((persona) => (
+                            <PersonaCard
+                                key={persona.id}
+                                id={persona.id}
+                                image={persona.image}
+                                title={persona.persona_name}
+                                lastUpdated={persona.lastUpdated}
+                            />
+                        )
+                    )}
                     <AddPersonaCard onClick={handleAddPersona} />
                 </div>
             </div>

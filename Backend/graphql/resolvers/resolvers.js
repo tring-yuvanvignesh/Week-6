@@ -85,26 +85,20 @@ const resolvers = {
             }
         },
 
-        createPersona: async (_, { persona_name, quote, description, attitudes, pain, jobs, activities, image }, { req }) => {
-            const user = authenticateUser(req)
-        
+        createPersona: async (_, { persona_name, quote, description, attitudes, pain, jobs, activities, image, user_id }) => {
+
             const result = await db.query(
                 `INSERT INTO persona (user_id, persona_name, quote, description, attitudes, pain, jobs, activities, image)
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-                [user.id, persona_name, quote, description, attitudes, pain, jobs, activities, image]
+                [user_id, persona_name, quote, description, attitudes, pain, jobs, activities, image]
             )
         
             return result.rows[0]
         },
         
 
-        updatePersonaForCurrentUser: async (_, { id, persona_name, quote, description, attitudes, pain, jobs, activities, image }, { req }) => {
-            
-            const user = authenticateUser(req)
-            const checkResult = await db.query("SELECT * FROM persona WHERE id = $1 AND user_id = $2", [id, user.id])
-            if (checkResult.rows.length === 0) {
-                throw new Error("Unauthorized")
-            }
+        updatePersonaForCurrentUser: async (_, { id, persona_name, quote, description, attitudes, pain, jobs, activities, image }) => {
+
         
             const result = await db.query(
                 `UPDATE persona SET persona_name = $2, quote = $3, description = $4, attitudes = $5, 
